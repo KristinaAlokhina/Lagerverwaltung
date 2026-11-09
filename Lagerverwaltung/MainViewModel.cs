@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,20 @@ namespace Lagerverwaltung
         private string _newArticleNumber = string.Empty;
         private string _newStockInput = "0";
         private string _newPriceInput = "0,00";
+
+        private string _filterText = string.Empty;
+        private ICollectionView? _productsView;
+
+        public string FilterText
+        {
+            get => _filterText;
+            set
+            {
+                _filterText = value;
+                OnPropertyChanged();
+                _productsView?.Refresh(); 
+            }
+        }
 
         // Eigenschaften für das Data-Binding mit den TextBoxen in der XAML-Ansicht
         public string NewName { get => _newName; set { _newName = value; OnPropertyChanged(); } }
@@ -70,6 +85,9 @@ namespace Lagerverwaltung
             await context.Database.EnsureCreatedAsync();
             var list = await context.Products.ToListAsync();
             Products = new ObservableCollection<Product>(list);
+
+            _productsView = CollectionViewSource.GetDefaultView(Products);
+            _productsView.Filter = FilterProductsMethod;
         }
 
         // Methode zum Hinzufügen eines Produkts mit strenger Validierung
@@ -152,6 +170,23 @@ namespace Lagerverwaltung
             MessageBox.Show("Bestand und Änderungen erfolgreich aktualisiert!", "Erfolg", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private bool FilterProductsMethod(object item)
+        {
+            if (item is Product product)
+            {
+                if (string.IsNullOrWhiteSpace(FilterText))
+                    return true;
+
+                string query = FilterText.Trim().ToLower();
+
+                bool nameMatch = product.Name != null && product.Name.ToLower().Contains(query);
+                bool numberMatch = product.ArticleNumber != null && product.ArticleNumber.ToLower().Contains(query);
+
+                return nameMatch || numberMatch;
+            }
+            return false;
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -191,5 +226,6 @@ namespace Lagerverwaltung
 
         public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         public event EventHandler? CanExecuteChanged;
+
     }
 }

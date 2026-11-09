@@ -76,6 +76,18 @@
             <Separator Margin="0,5,0,0" Background="#BDC3C7" Height="1"/>
         </StackPanel>
 
+        <!-- Überschrift und Suche -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+            <TextBlock Text="Lagerbestand-Übersicht" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+            <Separator Margin="0,5,0,10" Background="#BDC3C7" Height="1"/>
+
+            <!-- Suchfeld -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBlock Text="Suche (Name / Artikelnummer):" VerticalAlignment="Center" Margin="0,0,10,0" Foreground="#2C3E50" FontWeight="SemiBold"/>
+                <TextBox Width="250" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+        </StackPanel>
+
         <!-- Optimierte DataGrid-Tabelle -->
         <DataGrid Grid.Row="1" ItemsSource="{Binding Products}" SelectedItem="{Binding SelectedProduct}" 
                   AutoGenerateColumns="False" CanUserAddRows="False" SelectionMode="Single"
@@ -114,38 +126,41 @@
         </DataGrid>
 
         <!-- Formular & Aktionen -->
-        <GroupBox Grid.Row="2" Header="Artikelverwaltung" Margin="0,20,0,0" Padding="15" FontSize="13" Background="White" BorderBrush="#BDC3C7">
+        <GroupBox Grid.Row="2" Header="Artikelverwaltung" Margin="0,10,0,0" Padding="10" FontSize="13" Background="White" BorderBrush="#BDC3C7">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <!-- Eingabemaske -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Bottom">
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Artikelname:" Margin="0,0,0,4" Foreground="#7F8C8D" FontWeight="SemiBold"/>
-                        <TextBox Width="180" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
+                <!-- Eingabemaske und Hinzufügen-Button in einem WrapPanel -->
+                <WrapPanel Grid.Row="0" Margin="0,0,0,10">
+                    <StackPanel Margin="0,0,10,8">
+                        <TextBlock Text="Artikelname:" Margin="0,0,0,2" Foreground="#7F8C8D" FontWeight="SemiBold"/>
+                        <TextBox Width="160" Text="{Binding NewName, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Artikelnummer:" Margin="0,0,0,4" Foreground="#7F8C8D" FontWeight="SemiBold"/>
-                        <TextBox Width="120" Text="{Binding NewArticleNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Margin="0,0,10,8">
+                        <TextBlock Text="Artikelnummer:" Margin="0,0,0,2" Foreground="#7F8C8D" FontWeight="SemiBold"/>
+                        <TextBox Width="110" Text="{Binding NewArticleNumber, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
-                    <StackPanel Margin="0,0,12,0">
-                        <TextBlock Text="Bestand (Stk):" Margin="0,0,0,4" Foreground="#7F8C8D" FontWeight="SemiBold"/>
-                        <TextBox Width="90" Text="{Binding NewStock, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Margin="0,0,10,8">
+                        <TextBlock Text="Bestand (Stk):" Margin="0,0,0,2" Foreground="#7F8C8D" FontWeight="SemiBold"/>
+                        <TextBox Width="80" Text="{Binding NewStock, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
-                    <StackPanel Margin="0,0,15,0">
-                        <TextBlock Text="Preis (€):" Margin="0,0,0,4" Foreground="#7F8C8D" FontWeight="SemiBold"/>
-                        <TextBox Width="90" Text="{Binding NewPrice, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Margin="0,0,15,8">
+                        <TextBlock Text="Preis (€):" Margin="0,0,0,2" Foreground="#7F8C8D" FontWeight="SemiBold"/>
+                        <TextBox Width="80" Text="{Binding NewPrice, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
-                    <Button Content="Hinzufügen" Command="{Binding AddCommand}" Style="{StaticResource ModernButtonStyle}"
-                            Width="110" Background="#2ECC71" Foreground="White"/>
-                </StackPanel>
+                    <!-- Зеленая кнопка теперь стоит в потоке и никогда не перекроет другие -->
+                    <StackPanel VerticalAlignment="Bottom" Margin="0,0,0,8">
+                        <Button Content="Hinzufügen" Command="{Binding AddCommand}" Style="{StaticResource ModernButtonStyle}"
+                                Width="100" Background="#2ECC71" Foreground="White"/>
+                    </StackPanel>
+                </WrapPanel>
 
-                <!-- Globale Steuerung -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+                <!-- Globale Steuerung (Speichern / Löschen unten rechts) -->
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="Speichern" Command="{Binding UpdateStockCommand}" Style="{StaticResource ModernButtonStyle}"
                             Width="110" Margin="0,0,10,0" Background="#3498DB" Foreground="White"/>
                     <Button Content="Löschen" Command="{Binding DeleteCommand}" Style="{StaticResource ModernButtonStyle}"
